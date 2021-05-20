@@ -1,4 +1,4 @@
-# lsp-rooter.nvim
+# 🌳 lsp-rooter.nvim
 
 **lsp-rooter.nvim** is a neovim plugin written in lua to change the current working directory to the project's root directory automagically using nvim native lsp.
 

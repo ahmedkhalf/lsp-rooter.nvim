@@ -8,6 +8,7 @@
 
 - Automagically cd to project directory using nvim lsp
 - Dependency free, does not rely on `lspconfig`
+- Nvim-tree.lua support/integration
 
 ## ⚡️ Requirements
 

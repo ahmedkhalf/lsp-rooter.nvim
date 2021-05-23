@@ -38,7 +38,6 @@ lsp-rooter.nvim works automatically
 
 - Support non-LSP projects ([#2](https://github.com/ahmedkhalf/lsp-rooter.nvim/issues/2))
 - Add manual control using `:rooter`
-- Use on_detach for smarter lsp client detection ([#14535](https://github.com/neovim/neovim/issues/14535))
 
 ## 🤝 Contributing
 

@@ -41,8 +41,6 @@ end
 
 vim.cmd('autocmd BufEnter * call v:lua.__lsp_root_dir()')
 
--- TODO Add on_detach and remove autocmd above, after:
--- https://github.com/neovim/neovim/issues/14535
 
 local on_attach = function(client, bufnr)
   set_project_dir(client)

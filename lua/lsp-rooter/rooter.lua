@@ -1,4 +1,5 @@
 local config = require("lsp-rooter.config")
+local util = require("lsp-rooter.util")
 local M = {}
 
 local change_tree_dir = function(dir)
@@ -17,16 +18,6 @@ local set_project_dir = function(client)
   end
 end
 
--- TODO remove contains function and use something faster? or more elegant
-local contains = function(table, element)
-  for _, value in pairs(table) do
-    if value == element then
-      return true
-    end
-  end
-  return false
-end
-
 local get_lsp_client = function()
   -- Get lsp client for current buffer
   local ignore_lsp = config.options.ignore_lsp
@@ -37,7 +28,7 @@ local get_lsp_client = function()
   end
 
   for _, client in pairs(clients) do
-    if contains(ignore_lsp, client.name) == false then
+    if util.Set.contains(ignore_lsp, client.name) == false then
       local filetypes = client.config.filetypes
       if filetypes and vim.fn.index(filetypes,buf_ft) ~= -1 then
         return client
@@ -64,7 +55,7 @@ local on_attach = function(client, bufnr)
   -- TODO avoid code repetition in both attach and get client
   if M.enabled then
     local ignore_lsp = config.options.ignore_lsp
-    if contains(ignore_lsp, client.name) == false then
+    if util.Set.contains(ignore_lsp, client.name) == false then
       set_project_dir(client)
     end
   end

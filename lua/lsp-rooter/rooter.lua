@@ -9,18 +9,16 @@ local change_tree_dir = function(dir)
   end
 end
 
-local set_project_dir = function(client)
-  local project_root = client.config.root_dir
-  if M.project_dir ~= project_root then
-    M.project_dir = project_root
-    vim.api.nvim_set_current_dir(project_root)
-    change_tree_dir(project_root)
+local accept_client = function(client)
+  local ignore_lsp = config.options.ignore_lsp
+  if util.Set.contains(ignore_lsp, client.name) == false then
+    return true
   end
+  return false
 end
 
 local get_lsp_client = function()
   -- Get lsp client for current buffer
-  local ignore_lsp = config.options.ignore_lsp
   local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
   local clients = vim.lsp.buf_get_clients()
   if next(clients) == nil then
@@ -28,7 +26,7 @@ local get_lsp_client = function()
   end
 
   for _, client in pairs(clients) do
-    if util.Set.contains(ignore_lsp, client.name) == false then
+    if accept_client(client) then
       local filetypes = client.config.filetypes
       if filetypes and vim.fn.index(filetypes,buf_ft) ~= -1 then
         return client
@@ -39,25 +37,35 @@ local get_lsp_client = function()
   return nil
 end
 
--- autocmd BufEnter
-function _G.__lsp_root_dir()
-  if M.enabled then
-    local client = get_lsp_client()
-    if client ~= nil then
-      set_project_dir(client)
+local set_project_dir = function(client)
+  if M.enabled == false then
+    return -- Plugin not enabled
+  end
+
+  if client == nil then
+    client = get_lsp_client()
+    if client == nil then
+      return -- FAIL, cannot find client
     end
+  end
+
+  local project_root = client.config.root_dir
+  if M.project_dir ~= project_root then
+    M.project_dir = project_root
+    vim.api.nvim_set_current_dir(project_root)
+    change_tree_dir(project_root)
   end
 end
 
+-- autocmd BufEnter
+function _G.__lsp_root_dir()
+  set_project_dir()
+end
 
 ---@diagnostic disable-next-line: unused-local
 local on_attach = function(client, bufnr)
-  -- TODO avoid code repetition in both attach and get client
-  if M.enabled then
-    local ignore_lsp = config.options.ignore_lsp
-    if util.Set.contains(ignore_lsp, client.name) == false then
-      set_project_dir(client)
-    end
+  if accept_client(client) then
+    set_project_dir(client)
   end
 end
 

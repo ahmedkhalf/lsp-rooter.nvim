@@ -69,18 +69,20 @@ local on_attach = function(client, bufnr)
   end
 end
 
-local _start_client = vim.lsp.start_client
-vim.lsp.start_client = function(lsp_config)
-  if lsp_config.on_attach == nil then
-    lsp_config.on_attach = on_attach
-  else
-    local _on_attach = lsp_config.on_attach
-    lsp_config.on_attach = function(client, bufnr)
-      on_attach(client, bufnr)
-      _on_attach(client, bufnr)
+local create_on_attach = function()
+  local _start_client = vim.lsp.start_client
+  vim.lsp.start_client = function(lsp_config)
+    if lsp_config.on_attach == nil then
+      lsp_config.on_attach = on_attach
+    else
+      local _on_attach = lsp_config.on_attach
+      lsp_config.on_attach = function(client, bufnr)
+        on_attach(client, bufnr)
+        _on_attach(client, bufnr)
+      end
     end
+    return _start_client(lsp_config)
   end
-  return _start_client(lsp_config)
 end
 
 M.enabled = false
@@ -91,6 +93,7 @@ M.enable = function ()
   M.enabled = true
   if M.loaded == false then
     vim.cmd('autocmd BufEnter * call v:lua.__lsp_root_dir()')
+    create_on_attach()
     M.loaded = true
   end
 end

@@ -1,6 +1,8 @@
 -- lsp-router.nvim
 -- Automatically set pwd to root project directory using LSP
 
+local project_dir
+
 local change_tree_dir = function(dir)
   -- nvim-tree.lua
   if vim.fn.exists('g:loaded_tree') and vim.g.loaded_tree then
@@ -10,8 +12,11 @@ end
 
 local set_project_dir = function(client)
   local project_root = client.config.root_dir
-  vim.api.nvim_set_current_dir(project_root)
-  change_tree_dir(project_root)
+  if project_dir ~= project_root then
+    project_dir = project_root
+    vim.api.nvim_set_current_dir(project_root)
+    change_tree_dir(project_root)
+  end
 end
 
 local get_lsp_client = function()

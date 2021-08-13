@@ -1,4 +1,4 @@
-### ⚠️ WARNING ⚠️ This project is now deprecated, please use [project.nvim](https://github.com/ahmedkhalf/project.nvim) instead.
+### ⚠️ WARNING ⚠️ This plugin is now deprecated, please use [project.nvim](https://github.com/ahmedkhalf/project.nvim) instead.
 
 # 🌳 lsp-rooter.nvim
 
